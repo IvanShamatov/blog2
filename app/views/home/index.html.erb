@@ -1,0 +1,8 @@
+<H1><%= @blogname.upcase %></H1>
+<% @articles.each do |i| %> 
+  <%= i.title %><br/>
+<%  end %>
+
+<%= params %><br/>
+<%= session %><br/>
+<%= cookies %><br/>
