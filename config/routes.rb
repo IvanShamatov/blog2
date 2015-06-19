@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
 
+  devise_for :operators, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+  devise_for :users
   get 'home/index'
   get 'home/hello'
 
   resources :posts, only: [:show, :index]
-
+root to: "home#index"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
