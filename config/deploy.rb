@@ -2,13 +2,13 @@
 lock '3.4.0'
 
 set :application, 'blog2'
-set :repo_url, 'git@example.com:me/my_repo.git'
+set :repo_url, 'git@github.com:IvanShamatov/blog2.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, '/var/www/my_app_name'
+set :deploy_to, '/home/deployer/blog2'
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -26,7 +26,7 @@ set :repo_url, 'git@example.com:me/my_repo.git'
 # set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
 
 # Default value for linked_dirs is []
-# set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
+set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system', 'public/uploads')
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -35,6 +35,18 @@ set :repo_url, 'git@example.com:me/my_repo.git'
 # set :keep_releases, 5
 
 namespace :deploy do
+
+  COMMANDS = %w(start stop restart)
+
+  COMMANDS.each do |command|
+    task command do
+      on roles(:app), in: :sequence, wait: 5 do
+        within current_path do
+          execute :bundle, "exec thin #{command} -C config/thin.yml"
+        end
+      end
+    end
+  end
 
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
